@@ -121,10 +121,66 @@
 //   return URL.createObjectURL(blob);
 // }
 
-import axios from "axios";
+// import axios from "axios";
 
-const API_URL = "http://127.0.0.1:8000";
+// const API_URL = "http://127.0.0.1:8000";
 
+
+// export interface AnalyzeResponse {
+//   mood: string;
+//   confidence: number;
+// }
+
+// /**
+//  * Analyze image → emotion + confidence
+//  */
+// export async function analyzeImage(file: File): Promise<AnalyzeResponse> {
+//   const formData = new FormData();
+//   formData.append("file", file);
+
+//   try {
+//     const res = await axios.post<AnalyzeResponse>(
+//       `${API_URL}/predict`,
+//       formData,
+//       {
+//         headers: {
+//           "Content-Type": "multipart/form-data",
+//         },
+//         timeout: 30000,
+//       }
+//     );
+//     return res.data;
+//   } catch (error: any) {
+//     throw new Error(error.response?.data?.detail || "Failed to analyze image");
+//   }
+// }
+
+// /**
+//  * Generate wallpaper → returns Blob URL
+//  */
+// export async function generateWallpaper(file: File): Promise<string> {
+//   const formData = new FormData();
+//   formData.append("file", file);
+
+//   try {
+//     const res = await axios.post(`${API_URL}/wallpaper`, formData, {
+//       responseType: "blob", // 👈 VERY IMPORTANT
+//       headers: {
+//         "Content-Type": "multipart/form-data",
+//       },
+//       timeout: 60000,
+//     });
+
+//     return URL.createObjectURL(res.data);
+//   } catch (error: any) {
+//     throw new Error(
+//       error.response?.data?.detail || "Failed to generate wallpaper"
+//     );
+//   }
+// }
+
+
+// lib/api.ts
 
 export interface AnalyzeResponse {
   mood: string;
@@ -132,49 +188,35 @@ export interface AnalyzeResponse {
 }
 
 /**
- * Analyze image → emotion + confidence
+ * Convert File → base64 (for Hugging Face)
  */
-export async function analyzeImage(file: File): Promise<AnalyzeResponse> {
-  const formData = new FormData();
-  formData.append("file", file);
-
-  try {
-    const res = await axios.post<AnalyzeResponse>(
-      `${API_URL}/predict`,
-      formData,
-      {
-        headers: {
-          "Content-Type": "multipart/form-data",
-        },
-        timeout: 30000,
-      }
-    );
-    return res.data;
-  } catch (error: any) {
-    throw new Error(error.response?.data?.detail || "Failed to analyze image");
-  }
+function fileToBase64(file: File): Promise<string> {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = () => resolve(reader.result as string);
+    reader.onerror = reject;
+    reader.readAsDataURL(file);
+  });
 }
 
 /**
- * Generate wallpaper → returns Blob URL
+ * Analyze image → emotion
+ * Calls Next.js API route: /api/emotion
  */
-export async function generateWallpaper(file: File): Promise<string> {
-  const formData = new FormData();
-  formData.append("file", file);
+export async function analyzeImage(file: File): Promise<AnalyzeResponse> {
+  const imageBase64 = await fileToBase64(file);
 
-  try {
-    const res = await axios.post(`${API_URL}/wallpaper`, formData, {
-      responseType: "blob", // 👈 VERY IMPORTANT
-      headers: {
-        "Content-Type": "multipart/form-data",
-      },
-      timeout: 60000,
-    });
+  const res = await fetch("/api/emotion", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({ imageBase64 }),
+  });
 
-    return URL.createObjectURL(res.data);
-  } catch (error: any) {
-    throw new Error(
-      error.response?.data?.detail || "Failed to generate wallpaper"
-    );
+  if (!res.ok) {
+    throw new Error("Failed to analyze image");
   }
+
+  return res.json();
 }
