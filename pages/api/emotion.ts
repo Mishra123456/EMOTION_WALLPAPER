@@ -1,13 +1,18 @@
-// app/api/emotion/route.ts
+import type { NextApiRequest, NextApiResponse } from "next";
 
-import { NextResponse } from "next/server";
+export default async function handler(
+  req: NextApiRequest,
+  res: NextApiResponse
+) {
+  if (req.method !== "POST") {
+    return res.status(405).json({ error: "Method not allowed" });
+  }
 
-export async function POST(req: Request) {
   try {
-    const { imageBase64 } = await req.json();
+    const { imageBase64 } = req.body;
 
     if (!imageBase64) {
-      return NextResponse.json({ error: "No image provided" }, { status: 400 });
+      return res.status(400).json({ error: "No image provided" });
     }
 
     const hfRes = await fetch(
@@ -25,20 +30,18 @@ export async function POST(req: Request) {
     );
 
     if (!hfRes.ok) {
-      const text = await hfRes.text();
-      return NextResponse.json({ error: text }, { status: 500 });
+      const err = await hfRes.text();
+      return res.status(500).json({ error: err });
     }
 
     const data = await hfRes.json();
-
-    // HF returns: [[{label, score}, ...]]
     const top = data?.[0]?.[0];
 
-    return NextResponse.json({
+    return res.status(200).json({
       mood: top?.label ?? "unknown",
       confidence: top?.score ?? 0,
     });
   } catch (err) {
-    return NextResponse.json({ error: "Server error" }, { status: 500 });
+    return res.status(500).json({ error: "Server error" });
   }
 }
