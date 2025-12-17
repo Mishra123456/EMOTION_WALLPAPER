@@ -188,12 +188,17 @@ export interface AnalyzeResponse {
 }
 
 /**
- * Convert File → base64 (for Hugging Face)
+ * Convert File → RAW base64 (NO data:image/... prefix)
  */
 function fileToBase64(file: File): Promise<string> {
   return new Promise((resolve, reject) => {
     const reader = new FileReader();
-    reader.onload = () => resolve(reader.result as string);
+    reader.onload = () => {
+      const result = reader.result as string;
+      // IMPORTANT: remove data:image/...;base64,
+      const base64 = result.split(",")[1];
+      resolve(base64);
+    };
     reader.onerror = reject;
     reader.readAsDataURL(file);
   });
@@ -201,7 +206,7 @@ function fileToBase64(file: File): Promise<string> {
 
 /**
  * Analyze image → emotion
- * Calls Next.js API route: /api/emotion
+ * Calls Next.js API route
  */
 export async function analyzeImage(file: File): Promise<AnalyzeResponse> {
   const imageBase64 = await fileToBase64(file);

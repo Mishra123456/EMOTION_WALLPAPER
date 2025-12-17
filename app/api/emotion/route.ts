@@ -1,3 +1,5 @@
+// app/api/emotion/route.ts
+
 import { NextResponse } from "next/server";
 
 export async function POST(req: Request) {
@@ -29,6 +31,7 @@ export async function POST(req: Request) {
 
     const data = await hfRes.json();
 
+    // HF returns: [[{label, score}, ...]]
     const top = data?.[0]?.[0];
 
     return NextResponse.json({
