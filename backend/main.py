@@ -4,8 +4,8 @@ from fastapi.responses import StreamingResponse
 from PIL import Image
 import io
 
-from backend.model import detect_emotion
-from backend.wallpaper import generate_wallpaper
+from model import detect_emotion
+from wallpaper import generate_wallpaper
 
 app = FastAPI(
     title="Emotion Wallpaper API",
