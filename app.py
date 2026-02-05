@@ -255,23 +255,27 @@ async def fetch_emotion_image(emotion: str, attempt: int = 0) -> bytes | None:
 
 
 async def fetch_semantic_fallback(emotion: str) -> bytes | None:
-    """Fallback: Use semantic search terms if collections fail."""
+    """Fallback: Use Pollinations.AI for infinite, perfect matching wallpapers."""
     search_terms = EMOTION_SEARCHES.get(emotion, EMOTION_SEARCHES["neutral"])
     term = random.choice(search_terms)
     
-    # Use Unsplash Search API equivalent via source URL logic if possible, or Picsum
-    # We will use Picsum here for simplicity/reliability
-    seed = random.randint(1, 10000000)
-    url = f"https://picsum.photos/seed/{seed}/1920/1080"
-    if emotion in ["sad", "fear"]:
-        url += "?grayscale"
+    # Pollinations.ai is a free, limitless AI image generator API
+    # We add a random seed to the prompt to ensure variety even for the same term
+    seed = random.randint(1, 1000)
+    prompt = f"{term}, highly detailed, 8k wallpaper, cinematic lighting, {seed}"
+    encoded_prompt = prompt.replace(" ", "%20")
+    
+    url = f"https://image.pollinations.ai/prompt/{encoded_prompt}?width=1920&height=1080&nologo=true"
     
     try:
-        async with httpx.AsyncClient(follow_redirects=True, timeout=5.0) as client:
+        print(f"[{emotion}] 🎨 Generating AI Wallpaper: {term}...")
+        async with httpx.AsyncClient(follow_redirects=True, timeout=20.0) as client:
             response = await client.get(url)
             if response.status_code == 200:
+                print(f"[{emotion}] ✓ AI Generation Success")
                 return response.content
-    except:
+    except Exception as e:
+        print(f"AI Generation failed: {e}")
         pass
     return None
 
