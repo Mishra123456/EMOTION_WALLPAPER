@@ -1,0 +1,23 @@
+Testing with image: test_face.jpg
+
+--- TEST 1: Raw [0-255] ---
+neutral: 4.5247 (87.7%)
+happy: 2.1967 (8.5%)
+surprise: 0.4129 (1.4%)
+sad: 0.4205 (1.4%)
+angry: -0.9687 (0.4%)
+disgust: -2.9733 (0.0%)
+fear: -2.1439 (0.1%)
+contempt: -0.9193 (0.4%)
+Result: neutral
+
+--- TEST 2: Normalized [0-1] ---
+neutral: 4.3531 (74.5%)
+happy: 0.9381 (2.4%)
+surprise: -0.0469 (0.9%)
+sad: 3.0924 (21.1%)
+angry: -0.2008 (0.8%)
+disgust: -3.0305 (0.0%)
+fear: -2.3688 (0.1%)
+contempt: -2.3104 (0.1%)
+Result: neutral
