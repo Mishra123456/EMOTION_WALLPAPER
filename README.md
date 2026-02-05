@@ -12,7 +12,11 @@ An AI-powered web application that detects your real-time emotion and instantane
 
 ## 📸 Screenshots
 
-![App Screenshot](https://via.placeholder.com/800x450?text=Emotion+Wallpaper+App+Demo)
+![App Screenshot](public/e1.png)
+![App Screenshot](public/e2.png)
+![App Screenshot](public/e3.png)
+![App Screenshot](public/e4.png)
+![App Screenshot](public/e5.png)
 *(Add your actual app execution screenshot here)*
 
 ## 🏗️ Tech Stack
