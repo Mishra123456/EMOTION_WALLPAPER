@@ -46,7 +46,7 @@ export default function UploadPage() {
       }
     };
     loadModels();
-  }, []); // Only run once on mount
+  }, [modelsLoaded]); // Only run once on mount (or when modelsLoaded changes)
 
   const handleFileSelect = (file: File) => {
     setSelectedFile(file);

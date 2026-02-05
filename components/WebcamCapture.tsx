@@ -185,7 +185,7 @@ export default function WebcamCapture({
     if (captureState === 'camera') {
       startCamera();
     }
-  }, [facingMode]);
+  }, [captureState, startCamera]);
 
   useEffect(() => {
     return () => stopCamera();
