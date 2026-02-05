@@ -10,6 +10,11 @@ An AI-powered web application that detects your real-time emotion and instantane
 - **🎨 Modern UI**: Built with Glassmorphism, Framer Motion animations, and a responsive design.
 - **🛠️ Lightweight Backend**: A simple FastAPI proxy that handles API requests without needing heavy GPU servers.
 
+## 📸 Screenshots
+
+![App Screenshot](https://via.placeholder.com/800x450?text=Emotion+Wallpaper+App+Demo)
+*(Add your actual app execution screenshot here)*
+
 ## 🏗️ Tech Stack
 
 - **Frontend**: Next.js 14, React, TypeScript, Tailwind CSS, Framer Motion.
